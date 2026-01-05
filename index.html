@@ -1,201 +1,173 @@
-html<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Voice Scheduler</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<body class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
         
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
-        }
-        
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 2em;
-        }
-        
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1em;
-        }
-        
-        .input-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            text-align: left;
-            color: #555;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-        
-        input {
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            transition: border 0.3s;
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        button {
-            width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-        }
-        
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .status {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            font-weight: 500;
-            display: none;
-        }
-        
-        .status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .status.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        
-        .icon {
-            font-size: 3em;
-            margin-bottom: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="icon">📞</div>
-        <h1>AI Voice Scheduler</h1>
-        <p class="subtitle">Schedule meetings with AI voice assistant</p>
-        
-        <div class="input-group">
-            <label for="phone">Phone Number (with country code)</label>
-            <input 
-                type="tel" 
-                id="phone" 
-                placeholder="+1234567890" 
-                value="+91"
-            />
+        <div class="mb-6">
+            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">🤖</div>
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Vapi Assistant Manager</h1>
         </div>
-        
-        <button onclick="initiateCall()" id="callBtn">
-            🎙️ Start Voice Call
-        </button>
-        
-        <div id="status" class="status"></div>
+
+        <div class="flex border-b border-gray-200 mb-6">
+            <button id="tabWeb" class="flex-1 py-2 text-purple-600 border-b-2 border-purple-600 font-medium text-xs sm:text-sm">Web Talk</button>
+            <button id="tabPhone" class="flex-1 py-2 text-gray-400 font-medium text-xs sm:text-sm hover:text-purple-500">Phone Call</button>
+            <button id="tabCreate" class="flex-1 py-2 text-gray-400 font-medium text-xs sm:text-sm hover:text-purple-500">Create New</button>
+        </div>
+
+        <div id="webSection" class="space-y-4">
+            <p class="text-xs text-gray-400 mb-4">Chat with the current assistant.</p>
+            <button id="startWebCallBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all flex items-center justify-center gap-2 btn-disabled">
+                <span>⏳</span> Loading...
+            </button>
+            <button id="endWebCallBtn" class="hidden w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all">End Conversation</button>
+            <div id="webStatus" class="h-6 text-sm text-gray-500 font-medium mt-2"></div>
+        </div>
+
+        <div id="phoneSection" class="hidden space-y-4">
+            <input type="tel" id="phoneNumber" placeholder="+1 555 123 4567" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-purple-500 focus:ring-2 outline-none transition-all text-gray-700 bg-gray-50" />
+            <button id="triggerPhoneCallBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all">📱 Call Me</button>
+            <div id="phoneStatus" class="h-6 text-sm text-gray-500 font-medium mt-2"></div>
+        </div>
+
+        <div id="createSection" class="hidden space-y-4 text-left">
+            <div>
+                <label class="text-xs font-bold text-gray-500 uppercase">Assistant Name</label>
+                <input type="text" id="newAgentName" placeholder="e.g. Dr. Smith Assistant" class="w-full px-3 py-2 rounded border border-gray-300 focus:border-pink-500 outline-none" />
+            </div>
+            <div>
+                <label class="text-xs font-bold text-gray-500 uppercase">System Prompt</label>
+                <textarea id="newAgentPrompt" rows="3" placeholder="You are a helpful medical receptionist..." class="w-full px-3 py-2 rounded border border-gray-300 focus:border-pink-500 outline-none"></textarea>
+            </div>
+            <button id="createAgentBtn" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all">✨ Create Assistant</button>
+            <div id="createStatus" class="min-h-[24px] text-sm text-center text-gray-500 font-medium mt-2 break-all"></div>
+        </div>
+
     </div>
 
-    <script>
-        // PASTE YOUR PRODUCTION WEBHOOK URL HERE
-        const WEBHOOK_URL = 'PASTE_YOUR_PRODUCTION_WEBHOOK_URL_HERE';
+    <script type="module">
+        import Vapi from 'https://esm.sh/@vapi-ai/web';
+
+        // --- ⚠️ CONFIGURATION ⚠️ ---
+        const vapiPublicKey = "YOUR_VAPI_PUBLIC_KEY"; 
+        const assistantId = "YOUR_EXISTING_ASSISTANT_ID"; // For Web Call Tab
         
-        async function initiateCall() {
-            const phone = document.getElementById('phone').value.trim();
-            const status = document.getElementById('status');
-            const btn = document.getElementById('callBtn');
+        // n8n Webhook URLs
+        const phoneCallWebhook = "YOUR_WORKFLOW_A_URL"; 
+        const createAgentWebhook = "YOUR_NEW_WORKFLOW_C_URL"; // 👈 Paste new URL here
+
+        let vapiInstance = null;
+
+        // --- Init ---
+        (function initApp() {
+            const btn = document.getElementById('startWebCallBtn');
+            btn.classList.remove('btn-disabled');
+            btn.innerHTML = "<span>🎤</span> Start Conversation";
             
-            if (!phone || phone.length < 10) {
-                showStatus('Please enter a valid phone number', 'error');
+            // Event Listeners
+            document.getElementById('startWebCallBtn').addEventListener('click', startWebCall);
+            document.getElementById('endWebCallBtn').addEventListener('click', endWebCall);
+            document.getElementById('triggerPhoneCallBtn').addEventListener('click', triggerPhoneCall);
+            document.getElementById('createAgentBtn').addEventListener('click', createAssistant);
+
+            // Tab Switching
+            const tabs = ['web', 'phone', 'create'];
+            tabs.forEach(t => {
+                document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).addEventListener('click', () => switchTab(t));
+            });
+        })();
+
+        // --- 1. Create Assistant Logic ---
+        async function createAssistant() {
+            const name = document.getElementById('newAgentName').value;
+            const prompt = document.getElementById('newAgentPrompt').value;
+            const status = document.getElementById('createStatus');
+
+            if (!name || !prompt) {
+                status.textContent = "Please fill in all fields.";
+                status.className = "text-red-500 text-sm font-medium mt-2";
                 return;
             }
-            
-            btn.disabled = true;
-            btn.textContent = '📞 Calling...';
-            
-            showStatus('Initiating call...', 'info');
-            
+
+            status.textContent = "Creating Assistant...";
+            status.className = "text-pink-600 text-sm font-medium mt-2 animate-pulse";
+
             try {
-                const response = await fetch(WEBHOOK_URL, {
+                const response = await fetch(createAgentWebhook, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone_number: phone })
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ name: name, systemPrompt: prompt })
                 });
-                
+
                 const data = await response.json();
-                
-                if (response.ok && data.success) {
-                    showStatus('✅ Call started! Answer your phone.', 'success');
+
+                if (data.assistantId) {
+                    status.innerHTML = `Success! ID: <span class="font-mono text-xs select-all bg-gray-100 p-1 rounded">${data.assistantId}</span>`;
+                    status.className = "text-green-600 text-sm font-medium mt-2";
                 } else {
-                    showStatus('❌ Failed. Try again.', 'error');
-                    btn.disabled = false;
-                    btn.textContent = '🎙️ Start Voice Call';
+                    throw new Error("No ID returned");
                 }
-            } catch (error) {
-                showStatus('❌ Error: ' + error.message, 'error');
-                btn.disabled = false;
-                btn.textContent = '🎙️ Start Voice Call';
+            } catch (e) {
+                console.error(e);
+                status.textContent = "Creation Failed.";
+                status.className = "text-red-600 text-sm font-medium mt-2";
             }
         }
-        
-        function showStatus(message, type) {
-            const status = document.getElementById('status');
-            status.textContent = message;
-            status.className = 'status ' + type;
-            status.style.display = 'block';
+
+        // --- 2. Web Call Logic ---
+        async function startWebCall() {
+            updateStatus("webStatus", "Connecting...", "text-purple-600");
+            if (!vapiInstance) vapiInstance = new Vapi(vapiPublicKey);
+            
+            // Listener Setup (Simplified for brevity)
+            vapiInstance.on('call-start', () => toggleWebUI(true));
+            vapiInstance.on('call-end', () => toggleWebUI(false));
+
+            try {
+                await vapiInstance.start(assistantId);
+            } catch (e) {
+                updateStatus("webStatus", "Connection Failed", "text-red-600");
+            }
         }
-        
-        document.getElementById('phone').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') initiateCall();
-        });
+        function endWebCall() { if(vapiInstance) vapiInstance.stop(); }
+
+        // --- 3. Phone Call Logic ---
+        async function triggerPhoneCall() {
+            const phone = document.getElementById('phoneNumber').value;
+            if(!phone) return updateStatus("phoneStatus", "Invalid Number", "text-red-500");
+            
+            updateStatus("phoneStatus", "Dialing...", "text-purple-600");
+            try {
+                await fetch(phoneCallWebhook, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ phoneNumber: phone })
+                });
+                updateStatus("phoneStatus", "Calling...", "text-green-600");
+            } catch(e) { updateStatus("phoneStatus", "Error", "text-red-500"); }
+        }
+
+        // --- Helpers ---
+        function updateStatus(id, text, cls) {
+            const el = document.getElementById(id);
+            if(el) { el.textContent = text; el.className = `h-6 text-sm font-medium mt-2 ${cls}`; }
+        }
+        function toggleWebUI(live) {
+            document.getElementById('startWebCallBtn').classList.toggle('hidden', live);
+            document.getElementById('endWebCallBtn').classList.toggle('hidden', !live);
+            updateStatus("webStatus", live ? "Live" : "Ended", live ? "text-red-500" : "text-gray-500");
+        }
+        function switchTab(mode) {
+            ['web', 'phone', 'create'].forEach(m => {
+                const section = document.getElementById(m + 'Section');
+                const btn = document.getElementById('tab' + m.charAt(0).toUpperCase() + m.slice(1));
+                
+                if (m === mode) {
+                    section.classList.remove('hidden');
+                    btn.className = `flex-1 py-2 text-${mode === 'create' ? 'pink' : (mode === 'phone' ? 'indigo' : 'purple')}-600 border-b-2 border-${mode === 'create' ? 'pink' : (mode === 'phone' ? 'indigo' : 'purple')}-600 font-medium text-xs sm:text-sm`;
+                } else {
+                    section.classList.add('hidden');
+                    btn.className = "flex-1 py-2 text-gray-400 font-medium text-xs sm:text-sm hover:text-gray-600";
+                }
+            });
+        }
     </script>
 </body>
-</html>
