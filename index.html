@@ -1,173 +1,205 @@
-<body class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 min-h-screen flex items-center justify-center p-4">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Scheduler</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        .pulse-ring {
+            box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.7);
+            animation: pulse-purple 2s infinite;
+        }
+        @keyframes pulse-purple {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(124, 58, 237, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(124, 58, 237, 0); }
+        }
+        /* Disabled state */
+        .btn-disabled { opacity: 0.5; cursor: not-allowed; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 h-screen flex items-center justify-center p-4">
 
     <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
-        
-        <div class="mb-6">
-            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">🤖</div>
-            <h1 class="text-2xl font-bold text-gray-800 mb-2">Vapi Assistant Manager</h1>
+        <div class="mb-8">
+            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">📞</div>
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">AI Voice Scheduler</h1>
+            <p class="text-gray-500 text-sm">Book your consultation with Sarah instantly.</p>
         </div>
 
         <div class="flex border-b border-gray-200 mb-6">
-            <button id="tabWeb" class="flex-1 py-2 text-purple-600 border-b-2 border-purple-600 font-medium text-xs sm:text-sm">Web Talk</button>
-            <button id="tabPhone" class="flex-1 py-2 text-gray-400 font-medium text-xs sm:text-sm hover:text-purple-500">Phone Call</button>
-            <button id="tabCreate" class="flex-1 py-2 text-gray-400 font-medium text-xs sm:text-sm hover:text-purple-500">Create New</button>
+            <button id="tabWeb" class="flex-1 py-2 text-purple-600 border-b-2 border-purple-600 font-medium text-sm">Talk via Web (Free)</button>
+            <button id="tabPhone" class="flex-1 py-2 text-gray-400 font-medium text-sm hover:text-purple-500">Call My Phone</button>
         </div>
 
         <div id="webSection" class="space-y-4">
-            <p class="text-xs text-gray-400 mb-4">Chat with the current assistant.</p>
+            <p class="text-xs text-gray-400 mb-4">Uses your browser microphone.</p>
+            
             <button id="startWebCallBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all flex items-center justify-center gap-2 btn-disabled">
                 <span>⏳</span> Loading...
             </button>
-            <button id="endWebCallBtn" class="hidden w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all">End Conversation</button>
+
+            <button id="endWebCallBtn" class="hidden w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all">
+                End Conversation
+            </button>
             <div id="webStatus" class="h-6 text-sm text-gray-500 font-medium mt-2"></div>
         </div>
 
         <div id="phoneSection" class="hidden space-y-4">
-            <input type="tel" id="phoneNumber" placeholder="+1 555 123 4567" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-purple-500 focus:ring-2 outline-none transition-all text-gray-700 bg-gray-50" />
+            <input type="tel" id="phoneNumber" placeholder="+91 98765 43210" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all text-gray-700 bg-gray-50" />
             <button id="triggerPhoneCallBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all">📱 Call Me</button>
             <div id="phoneStatus" class="h-6 text-sm text-gray-500 font-medium mt-2"></div>
         </div>
-
-        <div id="createSection" class="hidden space-y-4 text-left">
-            <div>
-                <label class="text-xs font-bold text-gray-500 uppercase">Assistant Name</label>
-                <input type="text" id="newAgentName" placeholder="e.g. Dr. Smith Assistant" class="w-full px-3 py-2 rounded border border-gray-300 focus:border-pink-500 outline-none" />
-            </div>
-            <div>
-                <label class="text-xs font-bold text-gray-500 uppercase">System Prompt</label>
-                <textarea id="newAgentPrompt" rows="3" placeholder="You are a helpful medical receptionist..." class="w-full px-3 py-2 rounded border border-gray-300 focus:border-pink-500 outline-none"></textarea>
-            </div>
-            <button id="createAgentBtn" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all">✨ Create Assistant</button>
-            <div id="createStatus" class="min-h-[24px] text-sm text-center text-gray-500 font-medium mt-2 break-all"></div>
-        </div>
-
     </div>
 
     <script type="module">
         import Vapi from 'https://esm.sh/@vapi-ai/web';
 
-        // --- ⚠️ CONFIGURATION ⚠️ ---
+        // --- ⚠️ PASTE KEYS HERE ⚠️ ---
         const vapiPublicKey = "YOUR_VAPI_PUBLIC_KEY"; 
-        const assistantId = "YOUR_EXISTING_ASSISTANT_ID"; // For Web Call Tab
-        
-        // n8n Webhook URLs
-        const phoneCallWebhook = "YOUR_WORKFLOW_A_URL"; 
-        const createAgentWebhook = "YOUR_NEW_WORKFLOW_C_URL"; // 👈 Paste new URL here
+        const assistantId = "YOUR_ASSISTANT_ID";     
+        const n8nWebhookUrl = "YOUR_N8N_WEBHOOK_URL_FOR_PHONE_CALLS"; 
 
         let vapiInstance = null;
 
-        // --- Init ---
+        // --- 1. INITIALIZATION ---
+        // This runs automatically when the script loads
         (function initApp() {
+            // Activate the button
             const btn = document.getElementById('startWebCallBtn');
             btn.classList.remove('btn-disabled');
             btn.innerHTML = "<span>🎤</span> Start Conversation";
             
-            // Event Listeners
+            // Bind Event Listeners (The Safe Way)
             document.getElementById('startWebCallBtn').addEventListener('click', startWebCall);
             document.getElementById('endWebCallBtn').addEventListener('click', endWebCall);
             document.getElementById('triggerPhoneCallBtn').addEventListener('click', triggerPhoneCall);
-            document.getElementById('createAgentBtn').addEventListener('click', createAssistant);
-
-            // Tab Switching
-            const tabs = ['web', 'phone', 'create'];
-            tabs.forEach(t => {
-                document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).addEventListener('click', () => switchTab(t));
-            });
+            document.getElementById('tabWeb').addEventListener('click', () => switchTab('web'));
+            document.getElementById('tabPhone').addEventListener('click', () => switchTab('phone'));
         })();
 
-        // --- 1. Create Assistant Logic ---
-        async function createAssistant() {
-            const name = document.getElementById('newAgentName').value;
-            const prompt = document.getElementById('newAgentPrompt').value;
-            const status = document.getElementById('createStatus');
-
-            if (!name || !prompt) {
-                status.textContent = "Please fill in all fields.";
-                status.className = "text-red-500 text-sm font-medium mt-2";
+        async function startWebCall() {
+            // Debug Check
+            if (assistantId === "YOUR_ASSISTANT_ID") {
+                alert("Please paste your Assistant ID in the code!");
                 return;
             }
 
-            status.textContent = "Creating Assistant...";
-            status.className = "text-pink-600 text-sm font-medium mt-2 animate-pulse";
+            updateStatus("webStatus", "Initializing...", "text-purple-600");
 
-            try {
-                const response = await fetch(createAgentWebhook, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ name: name, systemPrompt: prompt })
-                });
-
-                const data = await response.json();
-
-                if (data.assistantId) {
-                    status.innerHTML = `Success! ID: <span class="font-mono text-xs select-all bg-gray-100 p-1 rounded">${data.assistantId}</span>`;
-                    status.className = "text-green-600 text-sm font-medium mt-2";
-                } else {
-                    throw new Error("No ID returned");
+            if (!vapiInstance) {
+                try {
+                    vapiInstance = new Vapi(vapiPublicKey);
+                    attachVapiListeners();
+                } catch (e) {
+                    console.error("Init Error:", e);
+                    updateStatus("webStatus", "Config Error (Check Console)", "text-red-600");
+                    return;
                 }
-            } catch (e) {
-                console.error(e);
-                status.textContent = "Creation Failed.";
-                status.className = "text-red-600 text-sm font-medium mt-2";
             }
-        }
 
-        // --- 2. Web Call Logic ---
-        async function startWebCall() {
-            updateStatus("webStatus", "Connecting...", "text-purple-600");
-            if (!vapiInstance) vapiInstance = new Vapi(vapiPublicKey);
-            
-            // Listener Setup (Simplified for brevity)
-            vapiInstance.on('call-start', () => toggleWebUI(true));
-            vapiInstance.on('call-end', () => toggleWebUI(false));
+            updateStatus("webStatus", "Connecting to Sarah...", "text-purple-600");
+            const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
             try {
-                await vapiInstance.start(assistantId);
+                // ✅ Start call with variables
+                await vapiInstance.start(assistantId, {
+                    variableValues: {
+                        user_timezone: userTimezone
+                    }
+                });
             } catch (e) {
-                updateStatus("webStatus", "Connection Failed", "text-red-600");
+                console.error("Start Error:", e);
+                let msg = e.error?.msg || e.message || "Connection Failed";
+                updateStatus("webStatus", "Error: " + msg, "text-red-600");
             }
         }
-        function endWebCall() { if(vapiInstance) vapiInstance.stop(); }
 
-        // --- 3. Phone Call Logic ---
+        function endWebCall() {
+            if (vapiInstance) vapiInstance.stop();
+            resetWebUI();
+        }
+
+        function attachVapiListeners() {
+            vapiInstance.on('call-start', () => {
+                updateStatus("webStatus", "🔴 Live with Sarah", "text-red-500 animate-pulse");
+                toggleButtons(true);
+            });
+            vapiInstance.on('call-end', () => {
+                resetWebUI();
+            });
+            vapiInstance.on('error', (e) => {
+                console.error("Vapi Error:", e);
+                resetWebUI();
+            });
+        }
+
+        // --- 2. PHONE CALL LOGIC ---
         async function triggerPhoneCall() {
             const phone = document.getElementById('phoneNumber').value;
-            if(!phone) return updateStatus("phoneStatus", "Invalid Number", "text-red-500");
+            if (!phone || phone.length < 10) return updateStatus("phoneStatus", "Invalid number", "text-red-500");
             
             updateStatus("phoneStatus", "Dialing...", "text-purple-600");
             try {
-                await fetch(phoneCallWebhook, {
+                await fetch(n8nWebhookUrl, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ phoneNumber: phone })
+                    body: JSON.stringify({ phoneNumber: phone, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone })
                 });
-                updateStatus("phoneStatus", "Calling...", "text-green-600");
-            } catch(e) { updateStatus("phoneStatus", "Error", "text-red-500"); }
+                updateStatus("phoneStatus", "Calling now!", "text-green-600");
+            } catch(e) { updateStatus("phoneStatus", "Network Error", "text-red-500"); }
         }
 
-        // --- Helpers ---
-        function updateStatus(id, text, cls) {
+        // --- UI HELPERS ---
+        function toggleButtons(isLive) {
+            const start = document.getElementById('startWebCallBtn');
+            const end = document.getElementById('endWebCallBtn');
+            if (isLive) {
+                start.classList.add('hidden');
+                end.classList.remove('hidden');
+                end.classList.add('pulse-ring');
+            } else {
+                start.classList.remove('hidden');
+                end.classList.add('hidden');
+                end.classList.remove('pulse-ring');
+            }
+        }
+
+        function resetWebUI() {
+            toggleButtons(false);
+            updateStatus("webStatus", "Call ended.", "text-gray-500");
+            setTimeout(() => { 
+                const el = document.getElementById("webStatus");
+                if(el && el.textContent === "Call ended.") el.textContent = ""; 
+            }, 3000);
+        }
+
+        function updateStatus(id, text, color) {
             const el = document.getElementById(id);
-            if(el) { el.textContent = text; el.className = `h-6 text-sm font-medium mt-2 ${cls}`; }
+            if(el) { el.textContent = text; el.className = `h-6 text-sm font-medium mt-2 fade-in ${color}`; }
         }
-        function toggleWebUI(live) {
-            document.getElementById('startWebCallBtn').classList.toggle('hidden', live);
-            document.getElementById('endWebCallBtn').classList.toggle('hidden', !live);
-            updateStatus("webStatus", live ? "Live" : "Ended", live ? "text-red-500" : "text-gray-500");
-        }
+
         function switchTab(mode) {
-            ['web', 'phone', 'create'].forEach(m => {
-                const section = document.getElementById(m + 'Section');
-                const btn = document.getElementById('tab' + m.charAt(0).toUpperCase() + m.slice(1));
-                
-                if (m === mode) {
-                    section.classList.remove('hidden');
-                    btn.className = `flex-1 py-2 text-${mode === 'create' ? 'pink' : (mode === 'phone' ? 'indigo' : 'purple')}-600 border-b-2 border-${mode === 'create' ? 'pink' : (mode === 'phone' ? 'indigo' : 'purple')}-600 font-medium text-xs sm:text-sm`;
-                } else {
-                    section.classList.add('hidden');
-                    btn.className = "flex-1 py-2 text-gray-400 font-medium text-xs sm:text-sm hover:text-gray-600";
-                }
-            });
+            const webBtn = document.getElementById('tabWeb');
+            const phoneBtn = document.getElementById('tabPhone');
+            const webSec = document.getElementById('webSection');
+            const phoneSec = document.getElementById('phoneSection');
+            if (mode === 'web') {
+                webBtn.className = "flex-1 py-2 text-purple-600 border-b-2 border-purple-600 font-medium text-sm";
+                phoneBtn.className = "flex-1 py-2 text-gray-400 font-medium text-sm hover:text-purple-500";
+                webSec.classList.remove('hidden');
+                phoneSec.classList.add('hidden');
+            } else {
+                phoneBtn.className = "flex-1 py-2 text-indigo-600 border-b-2 border-indigo-600 font-medium text-sm";
+                webBtn.className = "flex-1 py-2 text-gray-400 font-medium text-sm hover:text-purple-500";
+                phoneSec.classList.remove('hidden');
+                webSec.classList.add('hidden');
+            }
         }
     </script>
 </body>
+</html>
